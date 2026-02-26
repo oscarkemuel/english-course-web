@@ -1,5 +1,5 @@
 import AudioPlayerComponent, { RHAP_UI } from "react-h5-audio-player";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import useActivity from "@/hooks/useActivity";
@@ -12,34 +12,47 @@ interface IProps {
 
 const AudioPlayer = ({ src, open, onClose }: IProps) => {
   const [repeatCounter, setRepeatCounter] = useState(0);
+
+  const lastTimeRef = useRef(0);
   const { saveActivity } = useActivity();
 
-  const onChangeCounter = () => {
-    setRepeatCounter((old) => old + 1);
-  };
-
-  const getCounter = () => {
-    if (repeatCounter >= 2) {
-      return repeatCounter / 2;
+  const handlePlay = () => {
+    if (repeatCounter === 0) {
+      saveActivity();
+      setRepeatCounter(1);
     }
-    return repeatCounter;
   };
 
-  const resetCounter = () => setRepeatCounter(0);
+  const handleListen = (e: Event) => {
+    const currentTime = (e.target as HTMLAudioElement).currentTime;
+
+    if (lastTimeRef.current > currentTime + 1 && currentTime < 1) {
+      setRepeatCounter((prev) => prev + 1);
+    }
+
+    lastTimeRef.current = currentTime;
+  };
+
+  const resetCounter = () => {
+    setRepeatCounter(0);
+    lastTimeRef.current = 0;
+  };
 
   if (!open) return null;
 
   return (
-    <div className="fixed bottom-10 right-10 w-100 z-1301 shadow-2xl rounded-md overflow-hidden border border-zinc-800 bg-zinc-950">
+    <div
+      id="global-audio-player"
+      className="fixed bottom-10 right-10 w-100 z-100 shadow-2xl rounded-md overflow-hidden border border-zinc-800 bg-zinc-950"
+    >
       <AudioPlayerComponent
         src={src}
         className="bg-zinc-950! p-4!"
         customAdditionalControls={[
           RHAP_UI.LOOP,
 
-          <div className="flex items-center gap-2">
+          <div key="custom-controls" className="flex items-center gap-2">
             <Button
-              key="close-btn"
               variant="ghost"
               size="icon"
               onClick={onClose}
@@ -49,12 +62,11 @@ const AudioPlayer = ({ src, open, onClose }: IProps) => {
             </Button>
 
             <Button
-              key="counter-btn"
               variant="ghost"
               onClick={resetCounter}
               className="text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800 flex items-center gap-0.5 px-2"
             >
-              <span className="text-base">{getCounter()}</span>
+              <span className="text-base">{repeatCounter}</span>
               <span className="text-base font-bold">x</span>
             </Button>
           </div>,
@@ -62,10 +74,9 @@ const AudioPlayer = ({ src, open, onClose }: IProps) => {
         volume={0.5}
         loop
         showJumpControls={false}
-        onPlaying={onChangeCounter}
-        onPause={resetCounter}
+        onPlay={handlePlay}
+        onListen={handleListen}
         onLoadStart={resetCounter}
-        onPlay={saveActivity}
       />
     </div>
   );

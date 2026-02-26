@@ -18,16 +18,25 @@ const PdfViewerModal = ({ handleClose, open, fileUrl }: IProps) => {
       onOpenChange={(isOpen) => {
         if (!isOpen) handleClose();
       }}
+      modal={false}
     >
-      <DialogContent className="w-full max-w-[95vw] sm:max-w-[95vw] h-[95vh] p-0 flex flex-col overflow-hidden bg-zinc-950 border-zinc-800 [&>button]:text-zinc-300 [&>button]:hover:text-zinc-50 [&>button]:bg-zinc-900 [&>button]:p-1 [&>button]:rounded-md [&>button]:right-6 [&>button]:top-6">
+      <DialogContent
+        className="w-full max-w-[95vw] sm:max-w-[95vw] h-[95vh] p-0 flex flex-col overflow-hidden bg-zinc-950 border-zinc-800 [&>button]:text-zinc-300 [&>button]:hover:text-zinc-50 [&>button]:bg-zinc-900 [&>button]:p-1 [&>button]:rounded-md [&>button]:right-6 [&>button]:top-6"
+        onInteractOutside={(e) => {
+          const target = e.target as HTMLElement;
+          if (target.closest("#global-audio-player")) {
+            e.preventDefault();
+          }
+        }}
+      >
         <DialogHeader className="sr-only">
-          <DialogTitle>Material de Apoio</DialogTitle>
+          <DialogTitle>Material viewer</DialogTitle>
         </DialogHeader>
 
         <div className="flex-1 w-full h-full bg-zinc-900 overflow-hidden">
           <iframe
             src={`${fileUrl}#zoom=100`}
-            title="Visualizador de PDF"
+            title="PDF Viewer"
             className="w-full h-full border-none"
           />
         </div>
