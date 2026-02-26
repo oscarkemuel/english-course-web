@@ -25,16 +25,16 @@ export type Files = {
   materials: FileStructure[];
 };
 
-export interface Submodule {
+export interface Module {
   number: number;
   name: string;
   files: FileStructure[];
 }
 
-export interface Module {
+export interface Stage {
   number: number;
   name: string;
-  submodules: Submodule[];
+  submodules: Module[];
 }
 
 interface IModulesProvider {
@@ -42,57 +42,57 @@ interface IModulesProvider {
 }
 
 interface IModulesContext {
-  modules: Module[];
-  getSubmodules: (number: number) => Submodule[];
-  getFiles: (moduleId: number, submoduleId: number) => Files;
+  stages: Stage[];
+  getModules: (number: number) => Module[];
+  getFiles: (stageId: number, moduleId: number) => Files;
   toggleWatchedVideo: (params: { stage: string; module: string; videoName: string }) => void;
-  getSubmoduleProgress: (moduleId: number, submoduleId: number) => number;
-  getModuleProgress: (moduleId: number) => number;
-  getModuleName: (moduleId: number) => string;
-  getSubmoduleName: (moduleId: number, submoduleId: number) => string;
+  getModuleProgress: (stageId: number, moduleId: number) => number;
+  getStageProgress: (stageId: number) => number;
+  getStageName: (stageId: number) => string;
+  getModuleName: (stageId: number, moduleId: number) => string;
   getFilesCount: (files: FileStructure[]) => {
     videosCount: number;
     audiosCount: number;
     materialsCount: number;
   };
-  selectAllVideosAsWatched: (moduleId: number, submoduleId: number) => void;
+  selectAllVideosAsWatched: (stageId: number, moduleId: number) => void;
 }
 
 const ModulesContext = createContext({} as IModulesContext);
 
 export function ModulesProvider({ children }: IModulesProvider) {
   const listViewsId = "watched_videos";
-  const [modules, setModules] = useState<Module[]>([]);
+  const [stages, setStages] = useState<Stage[]>([]);
   const [watchedVideos, setWatchedVideos] = useLocalStorage(listViewsId, []);
   const { saveActivity, saveLastModuleWatched } = useActivity();
 
-  const getSubmodules = (number: number) => {
-    const module = modules.find((module) => module.number === number);
+  const getModules = (number: number) => {
+    const stage = stages.find((stage) => stage.number === number);
 
-    if (!module) return [];
+    if (!stage) return [];
 
-    return module.submodules;
+    return stage.submodules;
   };
 
-  const getFiles = (moduleId: number, submoduleId: number) => {
-    const module = modules.find((module) => module.number === moduleId);
+  const getFiles = (stageId: number, moduleId: number) => {
+    const stage = stages.find((stage) => stage.number === stageId);
+
+    if (!stage) return { videos: [], audios: [], materials: [] };
+
+    const module = stage.submodules.find(
+      (mod) => mod.number === moduleId,
+    );
 
     if (!module) return { videos: [], audios: [], materials: [] };
 
-    const submodule = module.submodules.find(
-      (sub) => sub.number === submoduleId,
-    );
-
-    if (!submodule) return { videos: [], audios: [], materials: [] };
-
-    const videos = submodule.files
+    const videos = module.files
       .filter((file) => file.type === "mp4")
       .map((file) => ({
         ...file,
-        isWatched: isVideoWatched(`${moduleId}-${submoduleId}-${file.name}`),
+        isWatched: isVideoWatched(`${stageId}-${moduleId}-${file.name}`),
       }));
-    const audios = submodule.files.filter((file) => file.type === "mp3");
-    const materials = submodule.files.filter(
+    const audios = module.files.filter((file) => file.type === "mp3");
+    const materials = module.files.filter(
       (file) => file.type !== "mp4" && file.type !== "mp3",
     );
 
@@ -116,27 +116,27 @@ export function ModulesProvider({ children }: IModulesProvider) {
 
   const isVideoWatched = (videoId: string) => watchedVideos.includes(videoId);
 
-  const getModuleProgress = (moduleId: number) => {
-    const module = modules.find((m) => m.number === moduleId);
-    if (!module) return 0;
+  const getStageProgress = (stageId: number) => {
+    const stage = stages.find((s) => s.number === stageId);
+    if (!stage) return 0;
 
-    const submoduleProgresses = module.submodules.map((submodule) =>
-      getSubmoduleProgress(moduleId, submodule.number),
+    const moduleProgress = stage.submodules.map((module) =>
+      getModuleProgress(stageId, module.number),
     );
-    const totalProgress = submoduleProgresses.reduce(
+    const totalProgress = moduleProgress.reduce(
       (acc, progress) => acc + progress,
       0,
     );
     const averageProgress =
-      submoduleProgresses.length > 0
-        ? totalProgress / submoduleProgresses.length
+      moduleProgress.length > 0
+        ? totalProgress / moduleProgress.length
         : 0;
 
     return Math.round(averageProgress);
   };
 
-  const getSubmoduleProgress = (moduleId: number, submoduleId: number) => {
-    const files = getFiles(moduleId, submoduleId);
+  const getModuleProgress = (stageId: number, moduleId: number) => {
+    const files = getFiles(stageId, moduleId);
     const totalVideos = files.videos.length;
     const watchedVideosCount = files.videos.filter(
       (file) => file.isWatched,
@@ -148,20 +148,20 @@ export function ModulesProvider({ children }: IModulesProvider) {
     return Math.round(progress);
   };
 
-  const getModuleName = (moduleId: number) => {
-    const module = modules.find((m) => m.number === moduleId);
-    if (!module) return "";
+  const getStageName = (stageId: number) => {
+    const stage = stages.find((m) => m.number === stageId);
+    if (!stage) return "";
 
-    return module.name;
+    return stage.name;
   };
 
-  const getSubmoduleName = (moduleId: number, submoduleId: number) => {
-    const module = modules.find((m) => m.number === moduleId);
+  const getModuleName = (stageId: number, moduleId: number) => {
+    const stage = stages.find((s) => s.number === stageId);
+    if (!stage) return "";
+    const module = stage.submodules.find((m) => m.number === moduleId);
     if (!module) return "";
-    const submodule = module.submodules.find((s) => s.number === submoduleId);
-    if (!submodule) return "";
 
-    return `Módulo 0${submoduleId}`;
+    return `Módulo 0${moduleId}`;
   };
 
   const getFilesCount = (files: FileStructure[]) => {
@@ -172,11 +172,11 @@ export function ModulesProvider({ children }: IModulesProvider) {
     return { videosCount, audiosCount, materialsCount };
   };
 
-  const selectAllVideosAsWatched = (moduleId: number, submoduleId: number) => {
-    const files = getFiles(moduleId, submoduleId);
+  const selectAllVideosAsWatched = (stageId: number, moduleId: number) => {
+    const files = getFiles(stageId, moduleId);
     
     const videoIds = files.videos.map(
-      (file) => `${moduleId}-${submoduleId}-${file.name}`,
+      (file) => `${stageId}-${moduleId}-${file.name}`,
     );
 
     const updatedWatchedVideos = Array.from(
@@ -184,28 +184,28 @@ export function ModulesProvider({ children }: IModulesProvider) {
     );
 
     setWatchedVideos(updatedWatchedVideos);
-    saveLastModuleWatched({ module: String(submoduleId), stage: String(moduleId) });
+    saveLastModuleWatched({ module: String(moduleId), stage: String(stageId) });
     saveActivity();
   };
 
   useEffect(() => {
     fetch("/curso_ingles.json")
       .then((response) => response.json())
-      .then((data) => setModules(data))
+      .then((data) => setStages(data))
       .catch((error) => console.error("Erro ao carregar JSON:", error));
   }, []);
 
   return (
     <ModulesContext.Provider
       value={{
-        modules,
-        getSubmodules,
+        stages,
+        getModules,
         getFiles,
         toggleWatchedVideo,
-        getSubmoduleProgress,
         getModuleProgress,
+        getStageProgress,
+        getStageName,
         getModuleName,
-        getSubmoduleName,
         getFilesCount,
         selectAllVideosAsWatched,
       }}

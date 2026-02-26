@@ -7,17 +7,17 @@ import { useModules } from "@/hooks/useModules";
 
 export default function ContinueLearningCard() {
   const { loadLastModuleWatched } = useActivity();
-  const { getModuleName, getSubmoduleName } = useModules();
+  const { getModuleName, getStageName } = useModules();
   const lastWatched = loadLastModuleWatched();
 
   const hasProgress = lastWatched && lastWatched.module !== "";
 
   const defaultName = "Unknown Module";
   const stageName = hasProgress
-    ? getModuleName(Number(lastWatched.stage)) || defaultName
+    ? getStageName(Number(lastWatched.stage)) || defaultName
     : defaultName;
-  const submoduleName = hasProgress
-    ? getSubmoduleName(Number(lastWatched.stage), Number(lastWatched.module)) ||
+  const moduleName = hasProgress
+    ? getModuleName(Number(lastWatched.stage), Number(lastWatched.module)) ||
       defaultName
     : defaultName;
 
@@ -43,7 +43,7 @@ export default function ContinueLearningCard() {
                   {stageName}
                 </p>
                 <p className="text-xs text-zinc-500 mt-1 truncate">
-                  Module: {submoduleName}
+                  Module: {moduleName}
                 </p>
               </div>
             </div>

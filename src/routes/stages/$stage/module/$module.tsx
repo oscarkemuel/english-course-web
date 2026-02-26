@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlayCircle, ArrowLeft, CheckCircle, CircleX } from "lucide-react";
+import { PlayCircle, ArrowLeft, CheckCircle, CircleX, Home } from "lucide-react";
 import React, { useEffect, useTransition } from "react";
 import { useModules, type FileStructure } from "@/hooks/useModules";
 import Video from "@/lib/Video";
@@ -8,6 +8,7 @@ import { ModuleContent } from "./-components/ModuleContent";
 import PdfViewerModal from "@/lib/PDFViewerModal";
 import AudioPlayer from "@/lib/AudioPlayer";
 import DownloadConfirmModal from "@/lib/DownloadConfirmModal";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/stages/$stage/module/$module")({
   component: RouteComponent,
@@ -18,8 +19,8 @@ function RouteComponent() {
   const navigate = useNavigate();
   const {
     getFiles,
-    getSubmoduleName,
     getModuleName,
+    getStageName,
     toggleWatchedVideo,
     selectAllVideosAsWatched,
   } = useModules();
@@ -35,8 +36,8 @@ function RouteComponent() {
     React.useState<FileStructure | null>(null);
 
   const files = getFiles(Number(stage), Number(module));
-  const submoduleName = getSubmoduleName(Number(stage), Number(module));
-  const moduleName = getModuleName(Number(stage));
+  const moduleName = getModuleName(Number(stage), Number(module));
+  const stageName = getStageName(Number(stage));
 
   const hasUnwatchedVideos = files.videos.some((video) => !video.isWatched);
 
@@ -112,10 +113,18 @@ function RouteComponent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [module, stage, files]);
 
-  if (!files || !submoduleName || !moduleName) {
+  if (!files || !moduleName || !stageName) {
     return (
-      <div className="flex items-center justify-center h-screen bg-zinc-950 p-8">
-        <p className="text-zinc-50">Módulo ou submódulo não encontrado.</p>
+      <div className="flex items-center justify-center h-screen bg-zinc-950 p-8 flex-col gap-3">
+        <p className="text-zinc-50">Module not found.</p>
+        
+        <Button
+          variant="ghost"
+          className="pl-0 text-zinc-400 hover:text-zinc-50 hover:bg-transparent w-fit"
+          onClick={() => navigate({ to: "/" })}
+        >
+          <Home className="w-4 h-4 mr-2" /> Back to Home
+        </Button>
       </div>
     );
   }
@@ -167,7 +176,7 @@ function RouteComponent() {
             >
               {selectedVideo
                 ? selectedVideo.name.replace(/\.[^/.]+$/, "")
-                : submoduleName}
+                : moduleName}
             </p>
 
             {selectedVideo && (
@@ -202,7 +211,7 @@ function RouteComponent() {
             </TabsList>
             <TabsContent value="visao-geral" className="mt-4">
               <p className="text-zinc-400 leading-relaxed">
-                This module is part of the {moduleName} phase of the English course.
+                This module is part of the {stageName} phase of the English course.
                 Here you will find video lessons and supporting materials to improve your learning.
                 Mark videos as watched to track your progress and never miss an important lesson!
               </p>
@@ -213,7 +222,7 @@ function RouteComponent() {
 
       <div className="w-full lg:w-100 border-l border-zinc-800 bg-zinc-900 flex flex-col h-125 lg:h-screen">
         <div className="p-4 border-b border-zinc-800 bg-zinc-950/50">
-          <h2 className="font-bold text-lg text-zinc-50">Conteúdo da Módulo</h2>
+          <h2 className="font-bold text-lg text-zinc-50">Module Content</h2>
         </div>
 
         <ModuleContent files={files} handleSelectFile={handleSelectFile} />

@@ -16,13 +16,13 @@ export const Route = createFileRoute("/stages/$stage/")({
 });
 
 function RouteComponent() {
-  const { getSubmodules, getModuleName, getFilesCount, getSubmoduleProgress } =
+  const { getModules, getStageName, getFilesCount, getModuleProgress } =
     useModules();
   const { stage } = Route.useParams();
   const navigate = useNavigate();
 
-  const modules = getSubmodules(Number(stage));
-  const moduleName = getModuleName(Number(stage));
+  const modules = getModules(Number(stage));
+  const stageName = getStageName(Number(stage));
 
   const handleBack = () => {
     navigate({
@@ -52,7 +52,7 @@ function RouteComponent() {
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Phases
           </Button>
           <h1 className="text-3xl font-bold tracking-tight text-zinc-50">
-            {moduleName}
+            {stageName}
           </h1>
           <p className="text-zinc-400">
             Select a module to access the lessons and materials.
@@ -64,7 +64,7 @@ function RouteComponent() {
             const { videosCount, materialsCount, audiosCount } = getFilesCount(
               module.files,
             );
-            const progress = getSubmoduleProgress(Number(stage), module.number);
+            const progress = getModuleProgress(Number(stage), module.number);
             const isFinished = progress === 100;
 
             return (

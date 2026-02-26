@@ -14,7 +14,7 @@ export const Route = createFileRoute("/stages/")({
 });
 
 function Stages() {
-  const { modules } = useModules();
+  const { stages } = useModules();
   const navigate = useNavigate();
 
   return (
@@ -38,23 +38,23 @@ function Stages() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-          {modules.map((module) => (
+          {stages.map((stage) => (
             <Link
               to="/stages/$stage"
-              params={{ stage: String(module.number) }}
-              key={module.number}
+              params={{ stage: String(stage.number) }}
+              key={stage.number}
             >
               <Card
-                key={module.number}
+                key={stage.number}
                 className="bg-zinc-900 border-zinc-800 cursor-pointer hover:border-primary hover:bg-zinc-800/50 transition-all group"
               >
                 <CardHeader>
                   <div className="w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                     <BookOpen className="w-6 h-6" />
                   </div>
-                  <CardTitle className="text-xl text-zinc-100">{`0${module.number} - ${module.name}`}</CardTitle>
+                  <CardTitle className="text-xl text-zinc-100">{`0${stage.number} - ${stage.name}`}</CardTitle>
                   <CardDescription className="text-zinc-400">
-                    {module.submodules.length} Módulos disponíveis
+                    {stage.submodules.length} Módulos disponíveis
                   </CardDescription>
                 </CardHeader>
               </Card>
