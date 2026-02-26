@@ -45,7 +45,11 @@ interface IModulesContext {
   stages: Stage[];
   getModules: (number: number) => Module[];
   getFiles: (stageId: number, moduleId: number) => Files;
-  toggleWatchedVideo: (params: { stage: string; module: string; videoName: string }) => void;
+  toggleWatchedVideo: (params: {
+    stage: string;
+    module: string;
+    videoName: string;
+  }) => void;
   getModuleProgress: (stageId: number, moduleId: number) => number;
   getStageProgress: (stageId: number) => number;
   getStageName: (stageId: number) => string;
@@ -56,6 +60,10 @@ interface IModulesContext {
     materialsCount: number;
   };
   selectAllVideosAsWatched: (stageId: number, moduleId: number) => void;
+  getNextModule: (
+    currentStageId: number,
+    currentModuleId: number,
+  ) => { stageId: number; moduleId: number } | null;
 }
 
 const ModulesContext = createContext({} as IModulesContext);
@@ -79,9 +87,7 @@ export function ModulesProvider({ children }: IModulesProvider) {
 
     if (!stage) return { videos: [], audios: [], materials: [] };
 
-    const module = stage.submodules.find(
-      (mod) => mod.number === moduleId,
-    );
+    const module = stage.submodules.find((mod) => mod.number === moduleId);
 
     if (!module) return { videos: [], audios: [], materials: [] };
 
@@ -103,7 +109,15 @@ export function ModulesProvider({ children }: IModulesProvider) {
     };
   };
 
-  const toggleWatchedVideo = ({ stage, module, videoName }: { stage: string; module: string; videoName: string }) => {
+  const toggleWatchedVideo = ({
+    stage,
+    module,
+    videoName,
+  }: {
+    stage: string;
+    module: string;
+    videoName: string;
+  }) => {
     const videoId = `${stage}-${module}-${videoName}`;
     const updatedWatchedVideos = watchedVideos.includes(videoId)
       ? watchedVideos.filter((id: string) => id !== videoId)
@@ -128,9 +142,7 @@ export function ModulesProvider({ children }: IModulesProvider) {
       0,
     );
     const averageProgress =
-      moduleProgress.length > 0
-        ? totalProgress / moduleProgress.length
-        : 0;
+      moduleProgress.length > 0 ? totalProgress / moduleProgress.length : 0;
 
     return Math.round(averageProgress);
   };
@@ -167,14 +179,16 @@ export function ModulesProvider({ children }: IModulesProvider) {
   const getFilesCount = (files: FileStructure[]) => {
     const videosCount = files.filter((file) => file.type === "mp4").length;
     const audiosCount = files.filter((file) => file.type === "mp3").length;
-    const materialsCount = files.filter((file) => file.type !== "mp4" && file.type !== "mp3").length;
+    const materialsCount = files.filter(
+      (file) => file.type !== "mp4" && file.type !== "mp3",
+    ).length;
 
     return { videosCount, audiosCount, materialsCount };
   };
 
   const selectAllVideosAsWatched = (stageId: number, moduleId: number) => {
     const files = getFiles(stageId, moduleId);
-    
+
     const videoIds = files.videos.map(
       (file) => `${stageId}-${moduleId}-${file.name}`,
     );
@@ -186,6 +200,42 @@ export function ModulesProvider({ children }: IModulesProvider) {
     setWatchedVideos(updatedWatchedVideos);
     saveLastModuleWatched({ module: String(moduleId), stage: String(stageId) });
     saveActivity();
+  };
+
+  const getNextModule = (currentStageId: number, currentModuleId: number) => {
+    const currentStageIndex = stages.findIndex(
+      (s) => s.number === currentStageId,
+    );
+    if (currentStageIndex === -1) return null;
+
+    const currentModuleIndex = stages[currentStageIndex].submodules.findIndex(
+      (m) => m.number === currentModuleId,
+    );
+    if (currentModuleIndex === -1) return null;
+
+    // Try to get next module in the same stage
+    if (currentModuleIndex < stages[currentStageIndex].submodules.length - 1) {
+      return {
+        stageId: currentStageId,
+        moduleId:
+          stages[currentStageIndex].submodules[currentModuleIndex + 1].number,
+      };
+    }
+
+    // If no next module in the same stage, try to get the first module of the next stage
+    if (currentStageIndex < stages.length - 1) {
+      const nextStage = stages[currentStageIndex + 1];
+
+      if (nextStage.submodules.length > 0) {
+        return {
+          stageId: nextStage.number,
+          moduleId: nextStage.submodules[0].number,
+        };
+      }
+    }
+
+    // If no next module or stage, return null
+    return null;
   };
 
   useEffect(() => {
@@ -208,6 +258,7 @@ export function ModulesProvider({ children }: IModulesProvider) {
         getModuleName,
         getFilesCount,
         selectAllVideosAsWatched,
+        getNextModule,
       }}
     >
       {children}

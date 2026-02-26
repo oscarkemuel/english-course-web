@@ -23,6 +23,7 @@ function RouteComponent() {
     getStageName,
     toggleWatchedVideo,
     selectAllVideosAsWatched,
+    getNextModule
   } = useModules();
   const [, startTransition] = useTransition();
 
@@ -129,6 +130,8 @@ function RouteComponent() {
     );
   }
 
+  const nextModule = getNextModule(Number(stage), Number(module));
+
   return (
     <div className="dark flex flex-col lg:flex-row h-screen bg-zinc-950 text-zinc-50 overflow-hidden">
       <div className="flex-1 flex flex-col h-full overflow-y-auto">
@@ -144,6 +147,7 @@ function RouteComponent() {
             <button
               className="text-sm text-zinc-400 hover:text-zinc-50 flex items-center gap-2 transition-colors"
               onClick={() => {
+                setSelectedVideoName(null);
                 selectAllVideosAsWatched(Number(stage), Number(module));
               }}
             >
@@ -156,7 +160,25 @@ function RouteComponent() {
           {!selectedVideo && (
             <div className="text-center">
               <PlayCircle className="w-12 h-12 text-zinc-700 mx-auto mb-4" />
-              <p className="text-zinc-500">Select a video to watch</p>
+              <p className="text-zinc-500">{!hasUnwatchedVideos ? "All videos watched!" : "Select a video to watch"}</p>
+
+              {!hasUnwatchedVideos && !!nextModule && (
+                <Button
+                  variant="outline"
+                  className="mt-4"
+                  onClick={() => {
+                    navigate({
+                      to: "/stages/$stage/module/$module",
+                      params: {
+                        stage: String(nextModule.stageId),
+                        module: String(nextModule.moduleId),
+                      },
+                    });
+                  }}
+                >
+                  Next Module
+                </Button>
+              )}
             </div>
           )}
           {selectedVideo && (
