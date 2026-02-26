@@ -14,6 +14,14 @@ const StreakCalendar = () => {
 
   const hasData = data && data.length > 0;
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   const renderContent = () => {
     if (!hasData) {
       return (
@@ -23,6 +31,7 @@ const StreakCalendar = () => {
         </div>
       );
     }
+
     return (
       <ActivityCalendar
           data={data}
@@ -36,7 +45,7 @@ const StreakCalendar = () => {
           tooltips={{
             activity: {
               text: (activity) =>
-                `${activity.count} activities on ${activity.date}`,
+                `${activity.count} activities on ${formatDate(activity.date)}`,
               placement: "right",
               offset: 6,
               hoverRestMs: 300,
