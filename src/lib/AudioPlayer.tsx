@@ -39,10 +39,18 @@ const AudioPlayer = ({ src, open, onClose }: IProps) => {
     lastTimeRef.current = 0;
   };
 
+  const handleDragStart = () => {
+    document.body.classList.add("is-dragging-player");
+  };
+
+  const handleDragStop = () => {
+    document.body.classList.remove("is-dragging-player");
+  };
+
   if (!open) return null;
 
   return (
-    <Draggable nodeRef={nodeRef} handle=".drag-handle" bounds="body">
+    <Draggable nodeRef={nodeRef} handle=".drag-handle" bounds="body" onStart={handleDragStart} onStop={handleDragStop}>
       <div
         ref={nodeRef}
         id="global-audio-player"

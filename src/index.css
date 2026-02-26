@@ -4,6 +4,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+.is-dragging-player iframe {
+  pointer-events: none !important;
+}
+
 :root {
   overflow-x: hidden;
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
