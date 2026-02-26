@@ -2,6 +2,7 @@ import AudioPlayerComponent, { RHAP_UI } from "react-h5-audio-player";
 import { useState } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import useActivity from "@/hooks/useActivity";
 
 interface IProps {
   open: boolean;
@@ -11,6 +12,7 @@ interface IProps {
 
 const AudioPlayer = ({ src, open, onClose }: IProps) => {
   const [repeatCounter, setRepeatCounter] = useState(0);
+  const { saveActivity } = useActivity();
 
   const onChangeCounter = () => {
     setRepeatCounter((old) => old + 1);
@@ -63,6 +65,7 @@ const AudioPlayer = ({ src, open, onClose }: IProps) => {
         onPlaying={onChangeCounter}
         onPause={resetCounter}
         onLoadStart={resetCounter}
+        onPlay={saveActivity}
       />
     </div>
   );

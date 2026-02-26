@@ -9,9 +9,9 @@ import PdfViewerModal from "@/lib/PDFViewerModal";
 import AudioPlayer from "@/lib/AudioPlayer";
 import DownloadConfirmModal from "@/lib/DownloadConfirmModal";
 
-export const Route = createFileRoute('/stages/$stage/module/$module')({
+export const Route = createFileRoute("/stages/$stage/module/$module")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
   const { module, stage } = Route.useParams();
@@ -31,7 +31,8 @@ function RouteComponent() {
 
   const [selectedPdf, setSelectedPdf] = React.useState<string | null>(null);
   const [selectedAudio, setSelectedAudio] = React.useState<string | null>(null);
-  const [selectedDocumentDownload, setSelectedDocumentDownload] = React.useState<FileStructure | null>(null);
+  const [selectedDocumentDownload, setSelectedDocumentDownload] =
+    React.useState<FileStructure | null>(null);
 
   const files = getFiles(Number(stage), Number(module));
   const submoduleName = getSubmoduleName(Number(stage), Number(module));
@@ -72,7 +73,11 @@ function RouteComponent() {
 
   const handleToggleWatched = () => {
     if (selectedVideo) {
-      toggleWatchedVideo(`${stage}-${module}-${selectedVideo.name}`);
+      toggleWatchedVideo({
+        module: String(module),
+        stage: String(stage),
+        videoName: selectedVideo.name,
+      });
     }
 
     const nextVideo = files.videos.find(
@@ -109,7 +114,7 @@ function RouteComponent() {
 
   if (!files || !submoduleName || !moduleName) {
     return (
-      <div className="flex items-center justify-center h-screen bg-zinc-950">
+      <div className="flex items-center justify-center h-screen bg-zinc-950 p-8">
         <p className="text-zinc-50">Módulo ou submódulo não encontrado.</p>
       </div>
     );
@@ -123,17 +128,17 @@ function RouteComponent() {
             className="text-sm text-zinc-400 hover:text-zinc-50 flex items-center gap-2 transition-colors"
             onClick={handleBack}
           >
-            <ArrowLeft className="w-4 h-4" /> Voltar para Módulos
+            <ArrowLeft className="w-4 h-4" /> Back to Modules
           </button>
 
           {hasUnwatchedVideos && (
             <button
               className="text-sm text-zinc-400 hover:text-zinc-50 flex items-center gap-2 transition-colors"
-              onClick={() =>
-                selectAllVideosAsWatched(Number(stage), Number(module))
-              }
+              onClick={() => {
+                selectAllVideosAsWatched(Number(stage), Number(module));
+              }}
             >
-              Finalizar Módulo
+              Complete module
             </button>
           )}
         </div>
@@ -142,7 +147,7 @@ function RouteComponent() {
           {!selectedVideo && (
             <div className="text-center">
               <PlayCircle className="w-12 h-12 text-zinc-700 mx-auto mb-4" />
-              <p className="text-zinc-500">Selecione um vídeo para assistir</p>
+              <p className="text-zinc-500">Select a video to watch</p>
             </div>
           )}
           {selectedVideo && (
@@ -173,13 +178,13 @@ function RouteComponent() {
               >
                 {selectedVideo.isWatched ? (
                   <>
-                    <CircleX className="w-4 h-4 text-red-400" /> Desmarcar como
-                    Assistido
+                    <CircleX className="w-4 h-4 text-red-400" /> Unmark as
+                    Watched
                   </>
                 ) : (
                   <>
-                    <CheckCircle className="w-4 h-4 text-green-500" /> Marcar
-                    como Assistido
+                    <CheckCircle className="w-4 h-4 text-green-500" /> Mark as
+                    Watched
                   </>
                 )}
               </button>
@@ -192,15 +197,14 @@ function RouteComponent() {
                 value="visao-geral"
                 className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400"
               >
-                Visão Geral
+                Overview
               </TabsTrigger>
             </TabsList>
             <TabsContent value="visao-geral" className="mt-4">
               <p className="text-zinc-400 leading-relaxed">
-                Este módulo faz parte da fase {moduleName} do curso de inglês.
-                Aqui você encontrará aulas em vídeo e materiais de apoio para
-                aprimorar seu aprendizado. Marque os vídeos como assistidos para
-                acompanhar seu progresso e não perder nenhuma aula importante!
+                This module is part of the {moduleName} phase of the English course.
+                Here you will find video lessons and supporting materials to improve your learning.
+                Mark videos as watched to track your progress and never miss an important lesson!
               </p>
             </TabsContent>
           </Tabs>

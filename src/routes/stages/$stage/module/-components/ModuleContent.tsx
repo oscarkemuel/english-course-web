@@ -22,7 +22,7 @@ export const ModuleContent = ({
           className="w-full"
         >
           <AccodionItemContent
-            name="Aulas"
+            name="Lessons"
             value="lessons"
             fileContent={files.videos}
             handleSelectFile={handleSelectFile}
@@ -30,7 +30,7 @@ export const ModuleContent = ({
 
           {files.audios.length > 0 && (
             <AccodionItemContent
-              name="Áudios"
+              name="Audios"
               value="audios"
               fileContent={files.audios}
               handleSelectFile={handleSelectFile}
@@ -39,7 +39,7 @@ export const ModuleContent = ({
 
           {files.materials.length > 0 && (
             <AccodionItemContent
-              name="Materiais"
+              name="Materials"
               value="materials"
               fileContent={files.materials}
               handleSelectFile={handleSelectFile}

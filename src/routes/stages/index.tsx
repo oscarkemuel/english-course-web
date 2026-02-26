@@ -1,12 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Home } from "lucide-react";
 import { useModules } from "@/hooks/useModules";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/stages/")({
   component: Stages,
@@ -14,16 +15,25 @@ export const Route = createFileRoute("/stages/")({
 
 function Stages() {
   const { modules } = useModules();
+  const navigate = useNavigate();
 
   return (
     <div className="dark min-h-screen bg-background text-foreground p-8">
       <div className="max-w-5xl mx-auto space-y-8">
+        <Button
+          variant="ghost"
+          className="pl-0 text-zinc-400 hover:text-zinc-50 hover:bg-transparent w-fit mb-3"
+          onClick={() => navigate({ to: "/" })}
+        >
+          <Home className="w-4 h-4 mr-2" /> Back to Home
+        </Button>
+
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-zinc-50">
-            Trilha de Estudos
+            Study phases
           </h1>
           <p className="text-zinc-400 mt-2">
-            Selecione uma fase para começar a estudar.
+            Choose a phase to access the modules and lessons.
           </p>
         </div>
 

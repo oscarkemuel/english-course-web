@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import useLocalStorage from "./useLocalStorage";
+import useActivity from "./useActivity";
 
 export type FileType =
   | "pdf"
@@ -44,7 +45,7 @@ interface IModulesContext {
   modules: Module[];
   getSubmodules: (number: number) => Submodule[];
   getFiles: (moduleId: number, submoduleId: number) => Files;
-  toggleWatchedVideo: (videoId: string) => void;
+  toggleWatchedVideo: (params: { stage: string; module: string; videoName: string }) => void;
   getSubmoduleProgress: (moduleId: number, submoduleId: number) => number;
   getModuleProgress: (moduleId: number) => number;
   getModuleName: (moduleId: number) => string;
@@ -63,6 +64,7 @@ export function ModulesProvider({ children }: IModulesProvider) {
   const listViewsId = "watched_videos";
   const [modules, setModules] = useState<Module[]>([]);
   const [watchedVideos, setWatchedVideos] = useLocalStorage(listViewsId, []);
+  const { saveActivity, saveLastModuleWatched } = useActivity();
 
   const getSubmodules = (number: number) => {
     const module = modules.find((module) => module.number === number);
@@ -101,12 +103,15 @@ export function ModulesProvider({ children }: IModulesProvider) {
     };
   };
 
-  const toggleWatchedVideo = (videoId: string) => {
+  const toggleWatchedVideo = ({ stage, module, videoName }: { stage: string; module: string; videoName: string }) => {
+    const videoId = `${stage}-${module}-${videoName}`;
     const updatedWatchedVideos = watchedVideos.includes(videoId)
       ? watchedVideos.filter((id: string) => id !== videoId)
       : [...watchedVideos, videoId];
 
     setWatchedVideos(updatedWatchedVideos);
+    saveActivity();
+    saveLastModuleWatched({ module, stage });
   };
 
   const isVideoWatched = (videoId: string) => watchedVideos.includes(videoId);
@@ -169,13 +174,18 @@ export function ModulesProvider({ children }: IModulesProvider) {
 
   const selectAllVideosAsWatched = (moduleId: number, submoduleId: number) => {
     const files = getFiles(moduleId, submoduleId);
+    
     const videoIds = files.videos.map(
       (file) => `${moduleId}-${submoduleId}-${file.name}`,
     );
+
     const updatedWatchedVideos = Array.from(
       new Set([...watchedVideos, ...videoIds]),
     );
+
     setWatchedVideos(updatedWatchedVideos);
+    saveLastModuleWatched({ module: String(submoduleId), stage: String(moduleId) });
+    saveActivity();
   };
 
   useEffect(() => {

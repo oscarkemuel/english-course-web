@@ -46,16 +46,16 @@ function RouteComponent() {
         <div className="space-y-4">
           <Button
             variant="ghost"
-            className="pl-0 text-zinc-400 hover:text-zinc-50 hover:bg-transparent w-fit"
+            className="pl-0 text-zinc-400 hover:text-zinc-50 hover:bg-transparent w-fit mb-3"
             onClick={handleBack}
           >
-            <ArrowLeft className="w-4 h-4 mr-2" /> Voltar para Fases
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back to Phases
           </Button>
           <h1 className="text-3xl font-bold tracking-tight text-zinc-50">
             {moduleName}
           </h1>
           <p className="text-zinc-400">
-            Escolha um módulo para acessar as aulas e materiais.
+            Select a module to access the lessons and materials.
           </p>
         </div>
 
@@ -77,7 +77,7 @@ function RouteComponent() {
                     <CardTitle className="text-2xl text-zinc-100">{`Módulo 0${module.number}`}</CardTitle>
                     {isFinished && (
                       <div className="flex items-center gap-2 bg-green-500/20 text-green-400 px-3 py-0.5 rounded-md text-sm">
-                        <Check className="w-4 h-4" /> Concluído
+                        <Check className="w-4 h-4" /> Completed
                       </div>
                     )}
                   </div>
@@ -94,19 +94,19 @@ function RouteComponent() {
                     {videosCount > 0 && (
                       <div className="flex items-center gap-2 bg-zinc-950/50 px-3 py-1 rounded-md">
                         <Video className="w-4 h-4 text-zinc-500" />{" "}
-                        <span>{videosCount} Vídeos</span>
+                        <span>{videosCount} Videos</span>
                       </div>
                     )}
                     {materialsCount > 0 && (
                       <div className="flex items-center gap-2 bg-zinc-950/50 px-3 py-1 rounded-md">
                         <FileText className="w-4 h-4 text-zinc-500" />{" "}
-                        <span>{materialsCount} Materiais</span>
+                        <span>{materialsCount} Materials</span>
                       </div>
                     )}
                     {audiosCount > 0 && (
                       <div className="flex items-center gap-2 bg-zinc-950/50 px-3 py-1 rounded-md">
                         <AudioLines className="w-4 h-4 text-zinc-500" />{" "}
-                        <span>{audiosCount} Áudios</span>
+                        <span>{audiosCount} Audios</span>
                       </div>
                     )}
                   </div>
@@ -117,7 +117,7 @@ function RouteComponent() {
                     className="pl-0 text-zinc-400 hover:text-zinc-50 hover:bg-transparent h-11 w-full bg-gray-800!"
                     onClick={() => handleAccessModule(module.number)}
                   >
-                    <PlayCircle className="w-5 h-5" /> Acessar Aulas
+                    <PlayCircle className="w-5 h-5" /> Access classes
                   </Button>
                 </CardFooter>
               </Card>

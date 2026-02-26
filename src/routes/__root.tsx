@@ -4,7 +4,7 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 
 const RootLayout = () => (
   <ModulesProvider>
-    <main className="min-h-screen w-[calc(100vw)] dark bg-background text-foreground p-8" >
+    <main className="min-h-screen w-[calc(100vw)] dark bg-background text-foreground" >
       <Outlet />
     </main>
     <TanStackRouterDevtools />
