@@ -1,19 +1,25 @@
+import { LOCAL_STORAGE_KEYS } from "@/utils/constants";
 import useLocalStorage from "./useLocalStorage";
 
+export type ActivityType = "audio" | "video" | "reading";
+export interface ActivityEntry {
+  date: string;
+  count: number;
+  level: number;
+  types: ActivityType[];
+}
+
 const useActivity = () => {
-  const [activity, setActivity] = useLocalStorage("activity", []);
+  const { ACTIVITY, LAST_MODULE_WATCHED } = LOCAL_STORAGE_KEYS;
+  const [activity, setActivity] = useLocalStorage(ACTIVITY, []);
   const [lastModuleWatched, setLastModuleWatched] = useLocalStorage(
-    "last-module-watched",
+    LAST_MODULE_WATCHED,
     { module: "", stage: "" },
   );
 
-  const activityTyped = activity as {
-    date: string;
-    count: number;
-    level: number;
-  }[];
+  const activityTyped = activity as ActivityEntry[];
 
-    const saveLastModuleWatched = ({
+  const saveLastModuleWatched = ({
     module,
     stage,
   }: {
@@ -27,7 +33,7 @@ const useActivity = () => {
     return lastModuleWatched as { module: string; stage: string };
   };
 
-  const saveActivity = () => {
+  const saveActivity = (type: ActivityType) => {
     const today = new Date().toISOString().split("T")[0];
     const activityData = activityTyped || [];
     const todayActivity = activityData.find((entry) => entry.date === today);
@@ -35,8 +41,11 @@ const useActivity = () => {
     if (todayActivity) {
       todayActivity.count += 1;
       todayActivity.level = Math.min(todayActivity.count, 4);
+      if (!todayActivity.types.includes(type)) {
+        todayActivity.types.push(type);
+      }
     } else {
-      activityData.push({ date: today, count: 1, level: 1 });
+      activityData.push({ date: today, count: 1, level: 1, types: [type] });
     }
 
     setActivity(activityData);

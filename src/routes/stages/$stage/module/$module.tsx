@@ -9,6 +9,7 @@ import PdfViewerModal from "@/lib/PDFViewerModal";
 import AudioPlayer from "@/lib/AudioPlayer";
 import DownloadConfirmModal from "@/lib/DownloadConfirmModal";
 import { Button } from "@/components/ui/button";
+import useActivity from "@/hooks/useActivity";
 
 export const Route = createFileRoute("/stages/$stage/module/$module")({
   component: RouteComponent,
@@ -26,6 +27,7 @@ function RouteComponent() {
     getNextModule
   } = useModules();
   const [, startTransition] = useTransition();
+  const { saveActivity } = useActivity();
 
   const [selectedVideoName, setSelectedVideoName] = React.useState<
     string | null
@@ -67,6 +69,10 @@ function RouteComponent() {
       case "apkg":
         setSelectedDocumentDownload(file);
         break;
+      case "pdf":
+        saveActivity('reading');
+        setSelectedPdf(file.path);
+        break
       default:
         setSelectedPdf(file.path);
         break;

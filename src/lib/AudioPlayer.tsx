@@ -19,7 +19,7 @@ const AudioPlayer = ({ src, open, onClose }: IProps) => {
 
   const handlePlay = () => {
     if (repeatCounter === 0) {
-      saveActivity();
+      saveActivity('audio');
       setRepeatCounter(1);
     }
   };

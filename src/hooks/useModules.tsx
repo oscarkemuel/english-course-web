@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import useLocalStorage from "./useLocalStorage";
 import useActivity from "./useActivity";
+import { LOCAL_STORAGE_KEYS } from "@/utils/constants";
 
 export type FileType =
   | "pdf"
@@ -69,9 +70,9 @@ interface IModulesContext {
 const ModulesContext = createContext({} as IModulesContext);
 
 export function ModulesProvider({ children }: IModulesProvider) {
-  const listViewsId = "watched_videos";
+  const { WATCHED_VIDEOS } = LOCAL_STORAGE_KEYS;
   const [stages, setStages] = useState<Stage[]>([]);
-  const [watchedVideos, setWatchedVideos] = useLocalStorage(listViewsId, []);
+  const [watchedVideos, setWatchedVideos] = useLocalStorage(WATCHED_VIDEOS, []);
   const { saveActivity, saveLastModuleWatched } = useActivity();
 
   const getModules = (number: number) => {
@@ -124,7 +125,7 @@ export function ModulesProvider({ children }: IModulesProvider) {
       : [...watchedVideos, videoId];
 
     setWatchedVideos(updatedWatchedVideos);
-    saveActivity();
+    saveActivity('video');
     saveLastModuleWatched({ module, stage });
   };
 
@@ -199,7 +200,7 @@ export function ModulesProvider({ children }: IModulesProvider) {
 
     setWatchedVideos(updatedWatchedVideos);
     saveLastModuleWatched({ module: String(moduleId), stage: String(stageId) });
-    saveActivity();
+    saveActivity('video');
   };
 
   const getNextModule = (currentStageId: number, currentModuleId: number) => {
