@@ -16,12 +16,13 @@ const StreakCalendar = () => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, "0");
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const year = date.getFullYear();
+    const day = date.getUTCDate().toString().padStart(2, "0");
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
+    const year = date.getUTCFullYear();
+
     return `${day}/${month}/${year}`;
   };
-
+  
   const renderContent = () => {
     if (!hasData) {
       return (
@@ -34,29 +35,29 @@ const StreakCalendar = () => {
 
     return (
       <ActivityCalendar
-          data={data}
-          theme={theme}
-          colorScheme="dark"
-          blockSize={12}
-          blockMargin={4}
-          fontSize={12}
-          showMonthLabels
-          showWeekdayLabels
-          tooltips={{
-            activity: {
-              text: (activity) =>
-                `${activity.count} activities on ${formatDate(activity.date)}`,
-              placement: "right",
-              offset: 6,
-              hoverRestMs: 300,
-              transitionStyles: {
-                duration: 100,
-                common: { fontFamily: "monospace" },
-              },
-              withArrow: true,
+        data={data}
+        theme={theme}
+        colorScheme="dark"
+        blockSize={12}
+        blockMargin={4}
+        fontSize={12}
+        showMonthLabels
+        showWeekdayLabels
+        tooltips={{
+          activity: {
+            text: (activity) =>
+              `${activity.count} activities on ${formatDate(activity.date)}`,
+            placement: "right",
+            offset: 6,
+            hoverRestMs: 300,
+            transitionStyles: {
+              duration: 100,
+              common: { fontFamily: "monospace" },
             },
-          }}
-        />
+            withArrow: true,
+          },
+        }}
+      />
     );
   };
 
@@ -69,9 +70,7 @@ const StreakCalendar = () => {
         </CardTitle>
       </CardHeader>
 
-      <CardContent>
-        {renderContent()}
-      </CardContent>
+      <CardContent>{renderContent()}</CardContent>
     </Card>
   );
 };

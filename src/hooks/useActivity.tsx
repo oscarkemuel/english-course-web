@@ -33,9 +33,15 @@ const useActivity = () => {
     return lastModuleWatched as { module: string; stage: string };
   };
 
-  const saveActivity = (type: ActivityType) => {
-    const today = new Date().toISOString().split("T")[0];
-    const activityData = activityTyped || [];
+const saveActivity = (type: ActivityType) => {
+    const dateObj = new Date();
+    
+    const tzOffset = dateObj.getTimezoneOffset() * 60000; 
+    const localDate = new Date(dateObj.getTime() - tzOffset);
+    
+    const today = localDate.toISOString().split("T")[0]; 
+
+    const activityData = [...(activityTyped || [])];
     const todayActivity = activityData.find((entry) => entry.date === today);
 
     if (todayActivity) {
