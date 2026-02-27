@@ -3,6 +3,7 @@ import useLocalStorage from "./useLocalStorage";
 import useActivity from "./useActivity";
 import { LOCAL_STORAGE_KEYS } from "@/utils/constants";
 import { toast } from "sonner";
+import useBackup from "./useBackup";
 
 export type FileType =
   | "pdf"
@@ -75,6 +76,7 @@ export function ModulesProvider({ children }: IModulesProvider) {
   const [stages, setStages] = useState<Stage[]>([]);
   const [watchedVideos, setWatchedVideos] = useLocalStorage(WATCHED_VIDEOS, []);
   const { saveActivity, saveLastModuleWatched } = useActivity();
+  const { backupLocalStorage } = useBackup();
 
   const getModules = (number: number) => {
     const stage = stages.find((stage) => stage.number === number);
@@ -135,6 +137,8 @@ export function ModulesProvider({ children }: IModulesProvider) {
         richColors: true,
       },
     );
+
+    backupLocalStorage();
   };
 
   const isVideoWatched = (videoId: string) => watchedVideos.includes(videoId);
@@ -213,6 +217,8 @@ export function ModulesProvider({ children }: IModulesProvider) {
     toast.success("Todos os vídeos do módulo marcados como assistidos!", {
       richColors: true,
     });
+
+    backupLocalStorage();
   };
 
   const getNextModule = (currentStageId: number, currentModuleId: number) => {
