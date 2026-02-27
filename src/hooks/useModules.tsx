@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import useLocalStorage from "./useLocalStorage";
 import useActivity from "./useActivity";
 import { LOCAL_STORAGE_KEYS } from "@/utils/constants";
+import { toast } from "sonner";
 
 export type FileType =
   | "pdf"
@@ -125,8 +126,15 @@ export function ModulesProvider({ children }: IModulesProvider) {
       : [...watchedVideos, videoId];
 
     setWatchedVideos(updatedWatchedVideos);
-    saveActivity('video');
+    saveActivity("video");
     saveLastModuleWatched({ module, stage });
+
+    toast.success(
+      `Vídeo ${watchedVideos.includes(videoId) ? "desmarcado" : "marcado"} como assistido!`,
+      {
+        richColors: true,
+      },
+    );
   };
 
   const isVideoWatched = (videoId: string) => watchedVideos.includes(videoId);
@@ -200,7 +208,11 @@ export function ModulesProvider({ children }: IModulesProvider) {
 
     setWatchedVideos(updatedWatchedVideos);
     saveLastModuleWatched({ module: String(moduleId), stage: String(stageId) });
-    saveActivity('video');
+    saveActivity("video");
+
+    toast.success("Todos os vídeos do módulo marcados como assistidos!", {
+      richColors: true,
+    });
   };
 
   const getNextModule = (currentStageId: number, currentModuleId: number) => {
