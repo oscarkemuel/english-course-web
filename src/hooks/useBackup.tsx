@@ -1,4 +1,22 @@
 const useBackup = () => {
+  const sendStatsToGoogleSheet = (stats: {
+    currentStreak: number;
+    maxStreak: number;
+    lastActivityDate?: string;
+  }) => {
+    if (import.meta.env.MODE === "production") {
+      return;
+    }
+
+    fetch(import.meta.env.VITE_SCRIPT_GOOGLE_APP, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain",
+      },
+      body: JSON.stringify(stats),
+    });
+  };
+
   const backupLocalStorage = () => {
     const data: Record<string, string | null> = {};
 
@@ -46,6 +64,7 @@ const useBackup = () => {
   return {
     backupLocalStorage,
     loadBackupFromFile,
+    sendStatsToGoogleSheet,
   };
 };
 

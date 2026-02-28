@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 public/curso_ingles.json
+.env
 
 # Editor directories and files
 .vscode/*
