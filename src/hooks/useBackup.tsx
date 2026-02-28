@@ -18,6 +18,10 @@ const useBackup = () => {
   };
 
   const backupLocalStorage = () => {
+    if (import.meta.env.MODE !== "production") {
+      return;
+    }
+
     const data: Record<string, string | null> = {};
 
     for (let i = 0; i < localStorage.length; i++) {
