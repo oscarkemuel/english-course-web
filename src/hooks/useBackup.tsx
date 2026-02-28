@@ -4,7 +4,7 @@ const useBackup = () => {
     maxStreak: number;
     lastActivityDate?: string;
   }) => {
-    if (import.meta.env.MODE === "production") {
+    if (import.meta.env.MODE !== "production") {
       return;
     }
 
