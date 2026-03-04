@@ -5,6 +5,7 @@ import ContinueLearningCard from "./-components/ContinueLearningCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { USER } from "@/utils/constants";
 import UploadBackup from "./-components/UploadBackup";
+import PlaylistButton from "./-components/PlaylistButton";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -37,7 +38,11 @@ function Index() {
           </div>
         </div>
 
-        <UploadBackup />
+        <div className="flex gap-4">
+          <UploadBackup />
+
+          <PlaylistButton />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

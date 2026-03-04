@@ -1,6 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlayCircle, ArrowLeft, CheckCircle, CircleX, Home } from "lucide-react";
+import {
+  PlayCircle,
+  ArrowLeft,
+  CheckCircle,
+  CircleX,
+  Home,
+} from "lucide-react";
 import React, { useEffect, useTransition } from "react";
 import { useModules, type FileStructure } from "@/hooks/useModules";
 import Video from "@/lib/Video";
@@ -24,7 +30,7 @@ function RouteComponent() {
     getStageName,
     toggleWatchedVideo,
     selectAllVideosAsWatched,
-    getNextModule
+    getNextModule,
   } = useModules();
   const [, startTransition] = useTransition();
   const { saveActivity } = useActivity();
@@ -34,7 +40,10 @@ function RouteComponent() {
   >(null);
 
   const [selectedPdf, setSelectedPdf] = React.useState<string | null>(null);
-  const [selectedAudio, setSelectedAudio] = React.useState<string | null>(null);
+  const [selectedAudio, setSelectedAudio] = React.useState<{
+    name: string;
+    path: string;
+  } | null>(null);
   const [selectedDocumentDownload, setSelectedDocumentDownload] =
     React.useState<FileStructure | null>(null);
 
@@ -64,15 +73,15 @@ function RouteComponent() {
         setSelectedVideoName(file.name);
         break;
       case "mp3":
-        setSelectedAudio(file.path);
+        setSelectedAudio({ name: file.name, path: file.path });
         break;
       case "apkg":
         setSelectedDocumentDownload(file);
         break;
       case "pdf":
-        saveActivity('reading');
+        saveActivity("reading");
         setSelectedPdf(file.path);
-        break
+        break;
       default:
         setSelectedPdf(file.path);
         break;
@@ -124,7 +133,7 @@ function RouteComponent() {
     return (
       <div className="flex items-center justify-center h-screen bg-zinc-950 p-8 flex-col gap-3">
         <p className="text-zinc-50">Module not found.</p>
-        
+
         <Button
           variant="ghost"
           className="pl-0 text-zinc-400 hover:text-zinc-50 hover:bg-transparent w-fit"
@@ -166,7 +175,11 @@ function RouteComponent() {
           {!selectedVideo && (
             <div className="text-center">
               <PlayCircle className="w-12 h-12 text-zinc-700 mx-auto mb-4" />
-              <p className="text-zinc-500">{!hasUnwatchedVideos ? "All videos watched!" : "Select a video to watch"}</p>
+              <p className="text-zinc-500">
+                {!hasUnwatchedVideos
+                  ? "All videos watched!"
+                  : "Select a video to watch"}
+              </p>
 
               {!hasUnwatchedVideos && !!nextModule && (
                 <Button
@@ -239,9 +252,10 @@ function RouteComponent() {
             </TabsList>
             <TabsContent value="visao-geral" className="mt-4">
               <p className="text-zinc-400 leading-relaxed">
-                This module is part of the {stageName} phase of the English course.
-                Here you will find video lessons and supporting materials to improve your learning.
-                Mark videos as watched to track your progress and never miss an important lesson!
+                This module is part of the {stageName} phase of the English
+                course. Here you will find video lessons and supporting
+                materials to improve your learning. Mark videos as watched to
+                track your progress and never miss an important lesson!
               </p>
             </TabsContent>
           </Tabs>
@@ -265,7 +279,8 @@ function RouteComponent() {
       <AudioPlayer
         open={!!selectedAudio}
         onClose={() => setSelectedAudio(null)}
-        src={selectedAudio || ""}
+        src={selectedAudio?.path || ""}
+        name={selectedAudio?.name || ""}
       />
 
       <DownloadConfirmModal

@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PlaylistRouteImport } from './routes/playlist'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StagesIndexRouteImport } from './routes/stages/index'
 import { Route as StagesStageIndexRouteImport } from './routes/stages/$stage/index'
 import { Route as StagesStageModuleModuleRouteImport } from './routes/stages/$stage/module/$module'
 
+const PlaylistRoute = PlaylistRouteImport.update({
+  id: '/playlist',
+  path: '/playlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -37,12 +43,14 @@ const StagesStageModuleModuleRoute = StagesStageModuleModuleRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/playlist': typeof PlaylistRoute
   '/stages/': typeof StagesIndexRoute
   '/stages/$stage/': typeof StagesStageIndexRoute
   '/stages/$stage/module/$module': typeof StagesStageModuleModuleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/playlist': typeof PlaylistRoute
   '/stages': typeof StagesIndexRoute
   '/stages/$stage': typeof StagesStageIndexRoute
   '/stages/$stage/module/$module': typeof StagesStageModuleModuleRoute
@@ -50,6 +58,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/playlist': typeof PlaylistRoute
   '/stages/': typeof StagesIndexRoute
   '/stages/$stage/': typeof StagesStageIndexRoute
   '/stages/$stage/module/$module': typeof StagesStageModuleModuleRoute
@@ -58,14 +67,21 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/playlist'
     | '/stages/'
     | '/stages/$stage/'
     | '/stages/$stage/module/$module'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/stages' | '/stages/$stage' | '/stages/$stage/module/$module'
+  to:
+    | '/'
+    | '/playlist'
+    | '/stages'
+    | '/stages/$stage'
+    | '/stages/$stage/module/$module'
   id:
     | '__root__'
     | '/'
+    | '/playlist'
     | '/stages/'
     | '/stages/$stage/'
     | '/stages/$stage/module/$module'
@@ -73,6 +89,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PlaylistRoute: typeof PlaylistRoute
   StagesIndexRoute: typeof StagesIndexRoute
   StagesStageIndexRoute: typeof StagesStageIndexRoute
   StagesStageModuleModuleRoute: typeof StagesStageModuleModuleRoute
@@ -80,6 +97,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/playlist': {
+      id: '/playlist'
+      path: '/playlist'
+      fullPath: '/playlist'
+      preLoaderRoute: typeof PlaylistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -113,6 +137,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PlaylistRoute: PlaylistRoute,
   StagesIndexRoute: StagesIndexRoute,
   StagesStageIndexRoute: StagesStageIndexRoute,
   StagesStageModuleModuleRoute: StagesStageModuleModuleRoute,
