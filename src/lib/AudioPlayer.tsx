@@ -29,7 +29,6 @@ const AudioPlayer = ({
   showSkipControls = false,
   autoPlay = false,
 }: IProps) => {
-  // ... (mantenha todo o restante do código do hook e dos handlers igual)
   const { hasAudioInPlaylist, addToPlaylist, removeFromPlaylist } = usePlaylist();
   const [repeatCounter, setRepeatCounter] = useState(0);
   const nodeRef = useRef(null);
@@ -100,7 +99,7 @@ const AudioPlayer = ({
             
             <div className="flex-1 flex flex-col overflow-hidden">
               <span className="text-[10px] text-zinc-500 font-semibold uppercase tracking-wider">
-                Tocando agora
+                Playing now
               </span>
               <span
                 className="text-sm font-medium text-zinc-200 truncate"
@@ -114,7 +113,7 @@ const AudioPlayer = ({
               variant="ghost"
               size="icon"
               onClick={handlePlaylistToggle}
-              title={isSaved ? "Remover da playlist" : "Adicionar à playlist"}
+              title={isSaved ? "Remove from playlist" : "Add to playlist"}
               className={`shrink-0 transition-colors ${
                 isSaved
                   ? "text-emerald-400 hover:text-emerald-300 hover:bg-emerald-400/10"

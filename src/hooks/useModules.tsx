@@ -232,7 +232,6 @@ export function ModulesProvider({ children }: IModulesProvider) {
     );
     if (currentModuleIndex === -1) return null;
 
-    // Try to get next module in the same stage
     if (currentModuleIndex < stages[currentStageIndex].submodules.length - 1) {
       return {
         stageId: currentStageId,
@@ -241,7 +240,6 @@ export function ModulesProvider({ children }: IModulesProvider) {
       };
     }
 
-    // If no next module in the same stage, try to get the first module of the next stage
     if (currentStageIndex < stages.length - 1) {
       const nextStage = stages[currentStageIndex + 1];
 
@@ -253,7 +251,6 @@ export function ModulesProvider({ children }: IModulesProvider) {
       }
     }
 
-    // If no next module or stage, return null
     return null;
   };
 
