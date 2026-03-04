@@ -74,7 +74,7 @@ function RouteComponent() {
               >
                 <CardHeader>
                   <div className="flex items-center gap-4 justify-between">
-                    <CardTitle className="text-2xl text-zinc-100">{`Módulo 0${module.number}`}</CardTitle>
+                    <CardTitle className="text-2xl text-zinc-100">{`Módulo ${String(module.number).padStart(2, '0')}`}</CardTitle>
                     {isFinished && (
                       <div className="flex items-center gap-2 bg-green-500/20 text-green-400 px-3 py-0.5 rounded-md text-sm">
                         <Check className="w-4 h-4" /> Completed

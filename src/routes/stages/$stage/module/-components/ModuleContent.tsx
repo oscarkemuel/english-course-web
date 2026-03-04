@@ -12,6 +12,28 @@ export const ModuleContent = ({
   files,
   handleSelectFile,
 }: ModuleContentProps) => {
+  function getPriority(str: string) {
+    const firstChar = str.charAt(0);
+
+    if (/^[a-zA-Z]/.test(firstChar)) return 0;
+    if (/^[0-9]/.test(firstChar)) return 1;
+    return 2;
+  }
+
+  const audios = files.audios.sort((a, b) => {
+    const priorityA = getPriority(a.name);
+    const priorityB = getPriority(b.name);
+
+    if (priorityA !== priorityB) {
+      return priorityA - priorityB;
+    }
+
+    return a.name.localeCompare(b.name, undefined, {
+      numeric: true,
+      sensitivity: "base",
+    });
+  });
+
   return (
     <div className="flex-1 overflow-hidden">
       <ScrollArea className="h-full w-full">
@@ -32,7 +54,7 @@ export const ModuleContent = ({
             <AccodionItemContent
               name="Audios"
               value="audios"
-              fileContent={files.audios}
+              fileContent={audios}
               handleSelectFile={handleSelectFile}
             />
           )}
