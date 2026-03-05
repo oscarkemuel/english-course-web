@@ -15,23 +15,28 @@ const usePlaylist = () => {
   const addToPlaylist = (clip: AudioClip) => {
     const updatedPlaylist = [...typedPlaylist, clip];
     setPlaylist(updatedPlaylist);
-  }
+  };
 
   const removeFromPlaylist = (url: string) => {
-    const updatedPlaylist = typedPlaylist.filter(clip => clip.url !== url);
+    const updatedPlaylist = typedPlaylist.filter((clip) => clip.url !== url);
     setPlaylist(updatedPlaylist);
-  }
+  };
 
   const hasAudioInPlaylist = (url: string) => {
-    return typedPlaylist.some(clip => clip.url === url);
-  }
+    return typedPlaylist.some((clip) => clip.url === url);
+  };
+
+  const clearPlaylist = () => {
+    setPlaylist([]);
+  };
 
   return {
     playlist: typedPlaylist,
     addToPlaylist,
     removeFromPlaylist,
     hasAudioInPlaylist,
+    clearPlaylist,
   };
-}
+};
 
 export default usePlaylist;

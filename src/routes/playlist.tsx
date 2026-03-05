@@ -11,8 +11,8 @@ export const Route = createFileRoute("/playlist")({
 
 function RouteComponent() {
   const navigate = useNavigate();
-  const { playlist, removeFromPlaylist } = usePlaylist();
-  
+  const { playlist, removeFromPlaylist, clearPlaylist } = usePlaylist();
+
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
   const stageName = "Playlist";
@@ -60,19 +60,31 @@ function RouteComponent() {
               {stageName}
             </h1>
             <p className="text-zinc-400">
-              This is where your audio playlist will be displayed. You can listen
-              to your saved audio clips here and manage your playlist.
+              This is where your audio playlist will be displayed. You can
+              listen to your saved audio clips here and manage your playlist.
             </p>
           </div>
-          
-          {playlist.length > 0 && (
-            <Button 
-              onClick={handlePlayAll} 
-              className="pl-0 text-zinc-400 hover:text-zinc-50 hover:bg-transparent w-fit transition-all"
-            >
-              <Play className="w-5 h-5 mr-2 fill-current" /> Play All
-            </Button>
-          )}
+
+          <div className="flex items-center gap-4">
+            {playlist.length > 0 && (
+              <>
+                <Button
+                  variant="destructive"
+                  onClick={clearPlaylist}
+                  className="pl-0 text-zinc-400 hover:text-zinc-50 hover:bg-transparent w-fit transition-all"
+                >
+                  <Trash2 className="w-5 h-5 mr-1" /> Clear
+                </Button>
+
+                <Button
+                  onClick={handlePlayAll}
+                  className="pl-0 text-zinc-400 hover:text-zinc-50 hover:bg-transparent w-fit transition-all"
+                >
+                  <Play className="w-5 h-5 mr-1 fill-current" /> Play All
+                </Button>
+              </>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -93,14 +105,16 @@ function RouteComponent() {
               <div
                 key={item.url || index}
                 className={`group flex items-center justify-between p-4 rounded-xl border transition-all shadow-sm ${
-                  currentIndex === index 
-                    ? "border-emerald-500/50 bg-emerald-500/5" 
+                  currentIndex === index
+                    ? "border-emerald-500/50 bg-emerald-500/5"
                     : "border-zinc-800 bg-zinc-950 hover:border-zinc-700 hover:bg-zinc-900/80"
                 }`}
               >
                 <div className="flex items-center gap-4 overflow-hidden">
                   <div className="w-12 h-12 rounded-full bg-zinc-800/50 border border-zinc-700/50 flex items-center justify-center shrink-0 shadow-inner group-hover:bg-emerald-500/10 group-hover:border-emerald-500/20 transition-colors">
-                    <Music className={`w-5 h-5 transition-colors ${currentIndex === index ? "text-emerald-400" : "text-zinc-400 group-hover:text-emerald-400"}`} />
+                    <Music
+                      className={`w-5 h-5 transition-colors ${currentIndex === index ? "text-emerald-400" : "text-zinc-400 group-hover:text-emerald-400"}`}
+                    />
                   </div>
                   <div className="flex flex-col overflow-hidden">
                     <span
@@ -123,7 +137,9 @@ function RouteComponent() {
                     className={`rounded-full ${currentIndex === index ? "text-emerald-400 bg-emerald-400/10" : "text-zinc-400 hover:text-emerald-400 hover:bg-emerald-400/10"}`}
                     title={currentIndex === index ? "Playing" : "Play audio"}
                   >
-                    <Play className={`w-5 h-5 ${currentIndex === index ? "fill-current" : "fill-current"}`} />
+                    <Play
+                      className={`w-5 h-5 ${currentIndex === index ? "fill-current" : "fill-current"}`}
+                    />
                   </Button>
                   <Button
                     variant="ghost"
